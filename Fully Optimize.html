@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HAPPY BIRTHDAY JHANKAR</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tagesschrift&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: lightpink;
+      font-family: Arial, sans-serif;
+      color: #d6336c;
+      text-align: center;
+      overflow-x: hidden;
+    }
+
+    #countdownContainer {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: lightpink;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-size: 5em;
+      font-weight: bold;
+      animation: fadeIn 1s;
+      z-index: 9999;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    #mainContent {
+      display: none;
+      padding: 20px;
+    }
+
+    #mainContent > h1 {
+      font-family: 'Cal Sans', sans-serif;
+      font-size: 2.8em;
+      margin-top: 20px;
+      text-shadow: 2px 2px 5px white;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .photo img {
+      width: 80%;
+      max-width: 300px;
+      border-radius: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+      margin: 20px 0;
+    }
+
+    .age {
+      font-size: 1.5em;
+      margin-top: 10px;
+    }
+
+    .surprise-btn {
+      padding: 15px 30px;
+      font-size: 1.2em;
+      margin-top: 20px;
+      background-color: #ff69b4;
+      border: none;
+      border-radius: 30px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    }
+
+    .surprise-msg {
+      display: none;
+      margin-top: 20px;
+      font-size: 1.4em;
+      background: rgba(255, 255, 255, 0.8);
+      color: #d6336c;
+      padding: 15px;
+      border-radius: 15px;
+      animation: fadeIn 2s;
+      border: 5px solid #ff69b4;
+      font-family: 'Tagesschrift', cursive;
+    }
+
+    .cake {
+      width: 120px;
+      margin-top: 10px;
+    }
+
+    .balloon {
+      position: absolute;
+      width: 40px;
+      height: 60px;
+      background-color: rgba(255,182,193,0.7);
+      border-radius: 50%;
+      animation: floatUp linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(100vh); }
+      100% { transform: translateY(-120vh); }
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    .countdownText {
+      font-size: 4em;
+      animation: countdownAnimation 1s ease-in-out infinite;
+    }
+
+    @keyframes countdownAnimation {
+      0%, 100% { transform: scale(1); color: #ff69b4; }
+      50% { transform: scale(1.1); color: #d6336c; }
+    }
+
+    #giftMessage {
+      font-size: 0.5em;
+      color: #ff69b4;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="countdownContainer">
+    <div>
+      <div id="countdown" class="countdownText">10</div>
+      <div id="giftMessage">YOUR BIRTHDAY GIFT PREPARE IN 10 SECOND PLEASE WAIT</div>
+    </div>
+  </div>
+
+  <div id="mainContent">
+    <h1>HAPPY BIRTHDAY MY LOVE 🎁🎈</h1>
+
+    <img class="cake" src="https://i.postimg.cc/8chCnr0Z/food.png" alt="Cake" />
+
+    <div class="photo">
+      <img src="https://i.ibb.co/tMKcXSxm/Birthday-Photo-1.png" alt="Jhankar">
+    </div>
+
+    <div class="age">CELEBRATE 21 YEARS</div>
+
+    <button class="surprise-btn" onclick="showSurprise()">CLICK FOR SURPRISE</button>
+
+    <div class="surprise-msg" id="surpriseMsg">
+      <h1>MY DEAR🫂 LOVE 🎈JHANKAR 👰‍♀️</h1>
+      <p>Your smile, laughter, and kindness make my life beautiful every single day.</p>
+      <p>You are my heart, my happiness, and my forever. I'm grateful for all our moments together.</p>
+      <p>Wishing you the happiest birthday filled with love, joy, and everything you deserve.</p>
+      <p class="footer">With all my love,<br/>Your Forever</p>
+    </div>
+  </div>
+
+  <audio id="birthdaySong" preload="auto" loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg" />
+  </audio>
+
+  <canvas id="confettiCanvas"></canvas>
+
+  <script>
+    const countdownText = document.getElementById("countdown");
+    const countdownContainer = document.getElementById("countdownContainer");
+    const mainContent = document.getElementById("mainContent");
+    const giftMessage = document.getElementById("giftMessage");
+    const song = document.getElementById("birthdaySong");
+    let countdown = 10;
+
+    // Try autoplay
+    song.play().catch(() => {
+      document.body.addEventListener("click", function enableAudio() {
+        if (song.paused) song.play();
+        document.body.removeEventListener("click", enableAudio);
+      });
+    });
+
+    const countdownInterval = setInterval(() => {
+      countdown--;
+      countdownText.textContent = countdown;
+      if (countdown === 0) {
+        clearInterval(countdownInterval);
+        countdownContainer.style.display = "none";
+        mainContent.style.display = "block";
+        createBalloons();
+      }
+    }, 1000);
+
+    function showSurprise() {
+      document.getElementById("surpriseMsg").style.display = "block";
+      startConfetti();
+      document.getElementById("surpriseMsg").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function createBalloons() {
+      for (let i = 0; i < 40; i++) {
+        const balloon = document.createElement("div");
+        balloon.className = "balloon";
+        balloon.style.left = Math.random() * 100 + "vw";
+        balloon.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 80%)`;
+        balloon.style.animationDuration = (6 + Math.random() * 5) + "s";
+        document.body.appendChild(balloon);
+      }
+    }
+
+    const canvas = document.getElementById("confettiCanvas");
+    const ctx = canvas.getContext("2d");
+    let pieces = [];
+    let numberOfPieces = 100;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+
+    canvas.width = width;
+    canvas.height = height;
+
+    window.addEventListener("resize", () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    });
+
+    function randomColor() {
+      const colors = ["#ff69b4", "#ffe4e1", "#ffb6c1", "#ffc0cb", "#db7093"];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function createConfettiPiece() {
+      return {
+        x: Math.random() * width,
+        y: Math.random() * height - height,
+        size: Math.random() * 8 + 2,
+        speed: Math.random() * 3 + 2,
+        color: randomColor(),
+        rotation: Math.random() * 360
+      };
+    }
+
+    function updatePieces() {
+      for (let i = 0; i < pieces.length; i++) {
+        pieces[i].y += pieces[i].speed;
+        pieces[i].rotation += pieces[i].speed;
+        if (pieces[i].y > height) {
+          pieces[i] = createConfettiPiece();
+          pieces[i].y = 0;
+        }
+      }
+    }
+
+    function drawPieces() {
+      ctx.clearRect(0, 0, width, height);
+      pieces.forEach(piece => {
+        ctx.fillStyle = piece.color;
+        ctx.save();
+        ctx.translate(piece.x, piece.y);
+        ctx.rotate(piece.rotation * Math.PI / 180);
+        ctx.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size);
+        ctx.restore();
+      });
+    }
+
+    function loop() {
+      updatePieces();
+      drawPieces();
+      requestAnimationFrame(loop);
+    }
+
+    function startConfetti() {
+      pieces = Array.from({ length: numberOfPieces }, createConfettiPiece);
+      loop();
+    }
+  </script>
+</body>
+</html>
